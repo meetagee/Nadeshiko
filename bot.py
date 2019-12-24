@@ -2,7 +2,8 @@ import discord
 from discord.ext import commands
 import time
 import asyncio
-from music import Music 
+from music import Music
+from insult import Insult
 
 # Logging global vars
 messages = joined = 0
@@ -24,6 +25,7 @@ async def on_ready():
 
 # Add Cog for bot's commands here
 bot.add_cog(Music(bot))
+bot.add_cog(Insult(bot))
 
 # Helper function for logging
 async def update_stats():
