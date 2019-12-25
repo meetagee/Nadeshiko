@@ -41,6 +41,13 @@ async def update_stats():
             print(e)
             await asyncio.sleep(5)
 
+# Welcoming message
+@bot.event
+async def on_member_join(member):
+    guild = member.guild
+    if guild.system_channel is not None:
+        welcome = 'Welcome {0.mention} to Miền Tây Sông Nước!'.format(member)
+        await guild.system_channel.send(welcome)
 
 # Run the Bot
 bot.loop.create_task(update_stats())
