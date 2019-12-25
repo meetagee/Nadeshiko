@@ -44,6 +44,7 @@ async def update_stats():
 # Welcoming message
 @bot.event
 async def on_member_join(member):
+    globals.joined += 1
     guild = member.guild
     if guild.system_channel is not None:
         welcome = 'Welcome {0.mention} to Miền Tây Sông Nước!'.format(member)
