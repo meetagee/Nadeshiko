@@ -50,6 +50,15 @@ async def on_member_join(member):
         welcome = 'Welcome {0.mention} to Miền Tây Sông Nước!'.format(member)
         await guild.system_channel.send(welcome)
 
+# Farewell message
+@bot.event
+async def on_member_remove(member):
+    globals.joined -= 1
+    guild = member.guild
+    if guild.system_channel is not None:
+        farewell = '{0.mention} has left/ been removed from Miền Tây Sông Nước. We wish you the very best.'.format(member)
+        await guild.system_channel.send(farewell)
+
 # Run the Bot
 bot.loop.create_task(update_stats())
 bot.run(token)
