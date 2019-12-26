@@ -4,11 +4,12 @@ import time
 import asyncio
 from music import Music
 from RNG import RNG
+from meme import Meme
 import globals
 
 # Bot & Server tokens initialization
 # TODO: figure out how to use dotenv
-token = "NjU3NTAwMzQ4NzIxOTIyMDQ5.XfyxTg.QMwxYFUt9cMrKKHf7dhziDBY_14"
+token = "NjU3NTAwMzQ4NzIxOTIyMDQ5.XgP_jg.AU1-D7XY1tO8TG2SF9FUCDyqgdc"
 
 # Bot initialization
 bot = commands.Bot(command_prefix=commands.when_mentioned_or("n!"),
@@ -21,6 +22,7 @@ async def on_ready():
 # Add Cog for bot's commands here
 bot.add_cog(Music(bot))
 bot.add_cog(RNG(bot))
+bot.add_cog(Meme(bot))
 
 # Helper function for logging
 async def update_stats():
