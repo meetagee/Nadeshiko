@@ -33,7 +33,7 @@ async def update_stats():
 
     while not bot.is_closed():
         try:
-            with open("stats.txt", "a") as f:
+            with open("log/stats.txt", "a") as f:
                 f.write(
                     f"Time: {int(time.time())}, Messages: {globals.messages}, Members Joined: {globals.joined}\n")
 
