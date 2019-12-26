@@ -5,6 +5,7 @@ import asyncio
 from music import Music
 from RNG import RNG
 from meme import Meme
+from wolfram import Wolfram
 import globals
 
 # Bot & Server tokens initialization
@@ -23,6 +24,7 @@ async def on_ready():
 bot.add_cog(Music(bot))
 bot.add_cog(RNG(bot))
 bot.add_cog(Meme(bot))
+bot.add_cog(Wolfram(bot))
 
 # Helper function for logging
 async def update_stats():
