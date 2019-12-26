@@ -12,5 +12,5 @@ class Meme(commands.Cog):
         """Show a random meme"""
 
         globals.messages += 1
-        with open('meme_01.jpg', 'rb') as f:
+        with open('media/meme_01.jpg', 'rb') as f:
             await ctx.send(file=discord.File(f, 'new_filename.png'))
