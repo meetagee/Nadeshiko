@@ -6,6 +6,7 @@ from music import Music
 from RNG import RNG
 from meme import Meme
 from wolfram import Wolfram
+from fun import Fun
 import globals
 
 # Bot & Server tokens initialization
@@ -25,6 +26,7 @@ bot.add_cog(Music(bot))
 bot.add_cog(RNG(bot))
 bot.add_cog(Meme(bot))
 bot.add_cog(Wolfram(bot))
+bot.add_cog(Fun(bot))
 
 # Helper function for logging
 async def update_stats():
