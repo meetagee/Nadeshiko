@@ -139,16 +139,13 @@ class Song:
                                color=discord.Color.blurple())
                  .add_field(name='Duration', value=self.source.duration)
                  .add_field(name='Requested by', value=self.requester.mention)
-                 .add_field(name='Uploader', value='[{0.source.uploader}]({0.source.uploader_url})'.format(self))
                  .add_field(name='Views', value=self.source.views)
                  .add_field(name='Likes', value=self.source.likes)
                  .add_field(name='Dislikes', value=self.source.dislikes)
                  .add_field(name='URL', value='[Click]({0.source.url})'.format(self))
-                 .add_field(name='Description', value=self.source.description, inline=False)
                  .set_thumbnail(url=self.source.thumbnail))
 
         return embed
-
 
 class SongQueue(asyncio.Queue):
     def __getitem__(self, item):
@@ -177,16 +174,12 @@ class VoiceState:
     def __init__(self, bot: commands.Bot, ctx: commands.Context):
         self.bot = bot
         self._ctx = ctx
-
         self.current = None
         self.voice = None
         self.next = asyncio.Event()
         self.songs = SongQueue()
-
         self._loop = False
-        self._volume = 0.5
         self.skip_votes = set()
-
         self.audio_player = bot.loop.create_task(self.audio_player_task())
 
     def __del__(self):
@@ -224,7 +217,6 @@ class VoiceState:
                     self.bot.loop.create_task(self.stop())
                     return
 
-            self.current.source.volume = self._volume
             self.voice.play(self.current.source, after=self.play_next_song)
             await self.current.source.channel.send(embed=self.current.create_embed())
 
@@ -303,17 +295,20 @@ class Music(commands.Cog):
         del self.voice_states[ctx.guild.id]
 
     @commands.command(name='volume')
-    async def _volume(self, ctx: commands.Context, *, volume: int): # TODO: volume not working pepega
+    async def _volume(self, ctx: commands.Context, *, volume: int):
         """Sets the volume of the player."""
 
         if not ctx.voice_state.is_playing:
             return await ctx.send('Nothing being played at the moment.')
 
-        if 0 > volume > 100:
-            return await ctx.send('Volume must be between 0 and 100')
+        if volume == -1:
+            return await ctx.send('Current volume is {}%'.format(int(ctx.voice_state.current.source.volume * 100)))
 
-        ctx.voice_state.volume = volume / 100
-        await ctx.send('Volume of the player set to {}%'.format(volume))
+        if volume < 0 or volume > 100:
+            return await ctx.send('Volume must be between 0 and 100')
+        else:
+            ctx.voice_state.current.source.volume = volume / 100
+            await ctx.send('Volume of the player set to {}%'.format(volume))
 
     @commands.command(name='now', aliases=['current', 'playing'])
     async def _now(self, ctx: commands.Context):
@@ -323,19 +318,22 @@ class Music(commands.Cog):
 
     @commands.command(name='pause') 
     @commands.has_permissions(manage_guild=True)
-    async def _pause(self, ctx: commands.Context): # TODO: pause not working pepega
+    async def _pause(self, ctx: commands.Context): 
         """Pauses the currently playing song."""
 
-        if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
+        if ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
             ctx.voice_state.voice.pause()
+            await ctx.send("Current song paused.")
 
     @commands.command(name='resume')
     @commands.has_permissions(manage_guild=True)
-    async def _resume(self, ctx: commands.Context): # TODO: since pause isn't working this shouldn't work as well pepehands
+    async def _resume(self, ctx: commands.Context):
         """Resumes a currently paused song."""
-
-        if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
+    
+        if ctx.voice_state.voice.is_paused():
             ctx.voice_state.voice.resume()
+            await ctx.send("Current song resumed.")
+    
 
     @commands.command(name='stop')
     @commands.has_permissions(manage_guild=True)
@@ -357,7 +355,7 @@ class Music(commands.Cog):
         voter = ctx.message.author
         if voter == ctx.voice_state.current.requester:
             ctx.voice_state.skip()
-            if ctx.voice_state.songs.__len__() == 0: # TODO: handling this is wrong since get would decrement -> len is 0 before song is actually played
+            if ctx.voice_state.songs.__len__() -1 == -1:
                 await ctx.invoke(self._leave)
 
         elif voter.id not in ctx.voice_state.skip_votes:
@@ -367,7 +365,7 @@ class Music(commands.Cog):
             if total_votes >= 3:
                 await ctx.message.add_reaction('⏭')
                 ctx.voice_state.skip()
-                if ctx.voice_state.songs.__len__() == 0:
+                if ctx.voice_state.songs.__len__() -1 == -1:
                     await ctx.invoke(self._leave)
             else:
                 await ctx.send('Skip vote added, currently at **{}/3**'.format(total_votes))
@@ -399,7 +397,7 @@ class Music(commands.Cog):
                  .set_footer(text='Viewing page {}/{}'.format(page, pages)))
         await ctx.send(embed=embed)
 
-    @commands.command(name='shuffle')
+    @commands.command(name='shuffle') # TODO: not working
     async def _shuffle(self, ctx: commands.Context):
         """Shuffles the queue."""
 
@@ -408,7 +406,7 @@ class Music(commands.Cog):
 
         ctx.voice_state.songs.shuffle()
 
-    @commands.command(name='remove')
+    @commands.command(name='remove') 
     async def _remove(self, ctx: commands.Context, index: int):
         """Removes a song from the queue at a given index."""
 
@@ -419,7 +417,7 @@ class Music(commands.Cog):
         if ctx.voice_state.songs.__len__() == 0:
             await ctx.invoke(self._leave)
 
-    @commands.command(name='loop')
+    @commands.command(name='loop') # TODO: not working
     async def _loop(self, ctx: commands.Context):
         """Loops the currently playing song.
 
@@ -503,10 +501,11 @@ class Music(commands.Cog):
                     try:
                         result = await self.bot.wait_for('reaction_add', timeout=30.0, check=check)
                         opt = convertToIdx(result[0])
-                        if(opt < 0):
+                        if opt < 0:
                             await sent.delete()
-                            await ctx.voice_state.stop()
-                            del self.voice_states[ctx.guild.id]
+                            if ctx.voice_state.current == None:
+                                await ctx.voice_state.stop()
+                                del self.voice_states[ctx.guild.id]
                             if(opt == -2):
                                 raise commands.CommandError('Invalid reaction!')
 
