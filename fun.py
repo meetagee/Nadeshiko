@@ -17,6 +17,8 @@ class Fun(commands.Cog):
         if ctx.message.mentions.__len__() > 0:
             for user in ctx.message.mentions:
                 await ctx.send(user.avatar_url)
+        else:
+            await ctx.send('{} That is not a valid user senpai !'.format(ctx.message.author.mention))
 
     @bot.command()
     async def fake(self, ctx):
@@ -26,8 +28,5 @@ class Fun(commands.Cog):
         if ctx.message.mentions.__len__() > 0:
             for user in ctx.message.mentions:
                 await ctx.message.guild.me.edit(nick=user.name)
-
-                """attemt to change avatar which does not work
-                avatar = user.avatar_url
-                with open(avatar, 'rb') as f:
-                    await ctx.message.guild.me.edit(avatar=f.read())"""
+        else:
+            await ctx.send('{} That is not a valid user senpai !'.format(ctx.message.author.mention))

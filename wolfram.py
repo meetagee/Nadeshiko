@@ -25,7 +25,6 @@ class Wolfram(commands.Cog):
 
         globals.messages += 1
         result = client.query("graph " + string)
-        #answer = next(result.results).subpods
         result = list(result)
         imageURL = result[1].get('subpod').get('img').get('@src')
         embed = discord.Embed()
