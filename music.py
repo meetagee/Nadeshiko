@@ -202,10 +202,6 @@ class VoiceState:
             if self.first_init:
                 try:
                     async with timeout(30):
-                        if self.loop:
-                            source = await YTDLSource.create_source(self._ctx, self.current.source.url, loop=self.bot.loop)
-                            song = Song(source)
-                            self.songs.put_left(song)
                         self.current = await self.songs.get()
                         self.first_init = False
                 except asyncio.TimeoutError:
@@ -213,16 +209,18 @@ class VoiceState:
                     return
 
             else:
-                if not self.songs.empty():
-                    if self.loop:
-                        source = await YTDLSource.create_source(self._ctx, self.current.source.url, loop=self.bot.loop)
-                        song = Song(source)
-                        self.songs.put_left(song)
+                if self.loop:
+                    source = await YTDLSource.create_source(self._ctx, self.current.source.url, loop=self.bot.loop)
+                    song = Song(source)
+                    self.songs.put_left(song)
                     self.current = await self.songs.get()
                 else:
-                    await self._ctx.send("End of queue.")
-                    self.bot.loop.create_task(self.stop())
-                    return
+                    if not self.songs.empty():
+                        self.current = await self.songs.get()
+                    else:
+                        await self._ctx.send("End of queue.")
+                        self.bot.loop.create_task(self.stop())
+                        return
 
             self.voice.play(self.current.source, after=self.play_next_song)
             await self.current.source.channel.send(embed=self.current.create_embed())
@@ -419,9 +417,9 @@ class Music(commands.Cog):
         ctx.voice_state.loop = not ctx.voice_state.loop
         
         if ctx.voice_state.loop:
-            return await ctx.send('Looping song ```css\n{}\n```'.format(str(ctx.voice_state.current.title)))
+            return await ctx.send('Looping song ```css\n{}\n```'.format(str(ctx.voice_state.current.source.title)))
         else:
-            return await ctx.send('Unlooping song ```css\n{}\n```'.format(str(ctx.voice_state.current.title)))
+            return await ctx.send('Unlooping song ```css\n{}\n```'.format(str(ctx.voice_state.current.source.title)))
 
 
     @commands.command(name='play')
