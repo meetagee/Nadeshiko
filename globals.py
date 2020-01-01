@@ -1,6 +1,8 @@
 # Initialize all globals needed
 def initialize(): 
-    global messages
-    messages = 0
-    global joined
-    joined = 0
+    global last_cmd
+    last_cmd = ""
+    global err_msg
+    err_msg = ""
+    global err
+    err = False

@@ -10,8 +10,7 @@ from fun import Fun
 from steam import Steam
 import globals
 
-# Bot & Server tokens initialization
-# TODO: figure out how to use dotenv
+# Bot tokens 
 token = "NjU3NTAwMzQ4NzIxOTIyMDQ5.XgP_jg.AU1-D7XY1tO8TG2SF9FUCDyqgdc"
 
 # Bot initialization
@@ -37,14 +36,13 @@ async def update_stats():
 
     while not bot.is_closed():
         try:
-            with open("log/stats.txt", "a") as f:
-                f.write(
-                    f"Time: {int(time.time())}, Messages: {globals.messages}, Members Joined: {globals.joined}\n")
-
-            globals.messages = 0
-            globals.joined = 0
-
+            if globals.err:
+                with open("log/stats.txt", "a") as f:
+                    f.write(
+                        f"Time: {int(time.time())}, Command: {globals.last_cmd}, Error message: {globals.err_msg}\n")
+                globals.err = False
             await asyncio.sleep(5)
+
         except Exception as e:
             print(e)
             await asyncio.sleep(5)
@@ -52,19 +50,17 @@ async def update_stats():
 # Welcoming message
 @bot.event
 async def on_member_join(member):
-    globals.joined += 1
     guild = member.guild
     if guild.system_channel is not None:
-        welcome = 'Welcome {0.mention} to Miền Tây Sông Nước!'.format(member)
+        welcome = 'Welcome {0.mention} to {1.name}'.format(member, guild)
         await guild.system_channel.send(welcome)
 
 # Farewell message
 @bot.event
 async def on_member_remove(member):
-    globals.joined -= 1
     guild = member.guild
     if guild.system_channel is not None:
-        farewell = '{0.mention} has left/ been removed from Miền Tây Sông Nước. We wish you the very best.'.format(member)
+        farewell = '{0.mention} has left/ been removed from {1.name}. We wish you the very best.'.format(member, guild)
         await guild.system_channel.send(farewell)
 
 # Run the Bot

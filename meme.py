@@ -1,9 +1,11 @@
 import discord
 import requests
+import globals
+import os
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageOps
 from discord.ext import commands
-import globals
+
 
 class Meme(commands.Cog):
     def __init__(self, bot):
@@ -11,9 +13,8 @@ class Meme(commands.Cog):
 
     @commands.command()
     async def memedog(self, ctx):
-        """Replace the dog face with mentioned user's avatar"""
+        """Replaces the dog's face with mentioned user's avatar"""
 
-        globals.messages += 1
         if ctx.message.mentions.__len__() > 0:
             for user in ctx.message.mentions:
                 avatarURL = user.avatar_url
@@ -28,17 +29,17 @@ class Meme(commands.Cog):
             avatar.putalpha(mask)
             meme = Image.open('media/meme_01.jpg')
             meme.paste(avatar, (215, 410), avatar)
-            meme.save('meme_ava.png')
-            with open('meme_ava.png', 'rb') as fp:
+            meme.save('media/tmp/meme_ava.png')
+            with open('media/tmp/meme_ava.png', 'rb') as fp:
                 await ctx.send(file=discord.File(fp, 'new_meme.png'))
+            os.remove('media/tmp/meme_ava.png')
         else:
             await ctx.send('{} That is not a valid user senpai !'.format(ctx.message.author.mention))
 
     @commands.command()
     async def memestep(self, ctx):
-        """Stepping on mentioned user's face"""
+        """Steps on mentioned user's face"""
 
-        globals.messages += 1
         if ctx.message.mentions.__len__() == 1:
             for user in ctx.message.mentions:
                 avatarURL = user.avatar_url
@@ -53,8 +54,9 @@ class Meme(commands.Cog):
             avatar.putalpha(mask)
             meme = Image.open('media/meme_02.jpg')
             meme.paste(avatar, (250, 770), avatar)
-            meme.save('meme_ava.png')
-            with open('meme_ava.png', 'rb') as fp:
+            meme.save('media/tmp/meme_ava.png')
+            with open('media/tmp/meme_ava.png', 'rb') as fp:
                 await ctx.send(file=discord.File(fp, 'new_meme.png'))
+            os.remove('media/tmp/meme_ava.png')
         else:
             await ctx.send('{} That is not a valid user senpai !'.format(ctx.message.author.mention))

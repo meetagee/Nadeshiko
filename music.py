@@ -4,9 +4,9 @@ import itertools
 import math
 import random
 import pprint
-
 import discord
 import youtube_dl
+import globals
 from async_timeout import timeout
 from discord.ext import commands
 
@@ -74,8 +74,11 @@ class YTDLSource(discord.PCMVolumeTransformer):
         data = await loop.run_in_executor(None, partial)
         
         if data is None:
+            globals.err = True
+            globals.err_msg = "Couldn\'t find anything that matches `{}`".format(search)
+            globals.last_cmd = "n!play {}".format(search)
             raise YTDLError('Couldn\'t find anything that matches `{}`'.format(search))
-
+           
         return data['entries']
 
 
@@ -87,6 +90,9 @@ class YTDLSource(discord.PCMVolumeTransformer):
         processed_info = await loop.run_in_executor(None, partial)
 
         if processed_info is None:
+            globals.err = True
+            globals.err_msg = "Couldn\'t fetch `{}`".format(search)
+            globals.last_cmd = "n!play {}".format(search)
             raise YTDLError('Couldn\'t fetch `{}`'.format(search))
 
         if 'entries' not in processed_info:
@@ -97,6 +103,9 @@ class YTDLSource(discord.PCMVolumeTransformer):
                 try:
                     info = processed_info['entries'].pop(0)
                 except IndexError:
+                    globals.err = True
+                    globals.err_msg = "Couldn\'t retrieve any matches for `{}`".format(search)
+                    globals.last_cmd = "n!play {}".format(search)
                     raise YTDLError('Couldn\'t retrieve any matches for `{}`'.format(search))
 
         return cls(ctx, discord.FFmpegPCMAudio(info['url'], **cls.FFMPEG_OPTIONS), data=info)
@@ -274,13 +283,16 @@ class Music(commands.Cog):
         ctx.voice_state = self.get_voice_state(ctx)
 
     async def cog_command_error(self, ctx: commands.Context, error: commands.CommandError):
+        globals.err = True
+        globals.err_msg = "An error occurred: {}".format(str(error))
+        globals.last_cmd = str(ctx.message)
         await ctx.send('An error occurred: {}'.format(str(error)))
         await ctx.invoke(self._stop)
 
     @commands.command(name='join', invoke_without_subcommand=True)
     @commands.has_permissions(manage_guild=True)
     async def _join(self, ctx: commands.Context):
-        """[Admin] Joins a voice channel."""
+        """[Admin] Joins a voice channel"""
 
         destination = ctx.author.voice.channel
         if ctx.voice_state.voice:
@@ -292,7 +304,7 @@ class Music(commands.Cog):
     @commands.command(name='leave', aliases=['disconnect'])
     @commands.has_permissions(manage_guild=True)
     async def _leave(self, ctx: commands.Context):
-        """[Admin] Clears the queue and leaves the voice channel."""
+        """[Admin] Clears the queue and leaves the voice channel"""
 
         if not ctx.voice_state.voice:
             return await ctx.send('Not connected to any voice channel.')
@@ -302,7 +314,7 @@ class Music(commands.Cog):
 
     @commands.command(name='volume')
     async def _volume(self, ctx: commands.Context, *, volume: int):
-        """Sets the volume of the player."""
+        """Sets the volume of the player from 0-100%"""
 
         if not ctx.voice_state.is_playing:
             return await ctx.send('Nothing being played at the moment.')
@@ -318,14 +330,14 @@ class Music(commands.Cog):
 
     @commands.command(name='now', aliases=['current', 'playing'])
     async def _now(self, ctx: commands.Context):
-        """Displays the currently playing song."""
+        """Displays the currently playing song"""
 
         await ctx.send(embed=ctx.voice_state.current.create_embed())
 
     @commands.command(name='pause') 
     @commands.has_permissions(manage_guild=True)
     async def _pause(self, ctx: commands.Context): 
-        """Pauses the currently playing song."""
+        """Pauses the currently playing song"""
 
         if ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
             ctx.voice_state.voice.pause()
@@ -334,17 +346,17 @@ class Music(commands.Cog):
     @commands.command(name='resume')
     @commands.has_permissions(manage_guild=True)
     async def _resume(self, ctx: commands.Context):
-        """Resumes a currently paused song."""
+        """Resumes a currently paused song"""
     
         if ctx.voice_state.voice.is_paused():
             ctx.voice_state.voice.resume()
-            await ctx.send("Current song resumed.")
+            await ctx.send("Current song resumed")
     
 
     @commands.command(name='stop')
     @commands.has_permissions(manage_guild=True)
     async def _stop(self, ctx: commands.Context):
-        """Stops playing song and clears the queue."""
+        """Stops playing song and clears the queue"""
 
         ctx.voice_state.songs.clear()
         await ctx.invoke(self._leave)
@@ -352,7 +364,7 @@ class Music(commands.Cog):
     @commands.command(name='skip')
     async def _skip(self, ctx: commands.Context):
         """Vote to skip a song. The requester can automatically skip.
-        3 skip votes are needed for the song to be skipped.
+        3 skip votes are needed for the song to be skipped
         """
 
         if not ctx.voice_state.is_playing:
@@ -381,7 +393,7 @@ class Music(commands.Cog):
 
     @commands.command(name='queue')
     async def _queue(self, ctx: commands.Context, *, page: int = 1):
-        """Shows the player's queue.
+        """Shows the player's queue
 
         You can optionally specify the page to show. Each page contains 10 elements.
         """
@@ -405,7 +417,7 @@ class Music(commands.Cog):
 
     @commands.command(name='loop')
     async def _loop(self, ctx: commands.Context):
-        """Loops the currently playing song.
+        """Loops the currently playing song
 
         Invoke this command again to unloop the song.
         """
@@ -424,7 +436,7 @@ class Music(commands.Cog):
 
     @commands.command(name='play')
     async def _play(self, ctx: commands.Context, *, search: str):
-        """Plays a song.
+        """Plays a song
         
         Can either find a song via its Youtube URL or its keywords
         """
@@ -454,14 +466,12 @@ class Music(commands.Cog):
                 if not httpFlag:
                     embed = (discord.Embed(title='These are the results I found:',
                                            color=discord.Color.blurple()))
-                    pprint.pprint(searchList)
                     i = 0
                     for entry in searchList:
                         if i == 5:
                             break
                         else:
                             try:
-                                print("[{}]: {}".format(i,str(entry['title'])))
                                 embed.add_field(name='Song #%d'%(i+1), value=str(entry['title']), inline=False)
                                 i += 1
                             except KeyError:

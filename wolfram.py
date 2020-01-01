@@ -12,18 +12,21 @@ class Wolfram(commands.Cog):
 
     @commands.command(pass_context=True)
     async def wolf(self, ctx, *, string):
-        """Wolframalpha solver, anything that normal wolframalpha can do"""
+        """Wolfram Alpha solver 
+        
+        Basically solves anything that normal Wolfram Alpha can do (+, -, *, /, integral, differentiation, etc.)"""
 
-        globals.messages += 1
         result = client.query(string)
         answer = next(result.results).text
-        await ctx.send('{} Result: {}' .format(ctx.message.author.mention, answer))
+        await ctx.send('[{}: {}]\nResult: {}' .format(ctx.message.author.mention, string, answer))
 
     @commands.command(pass_context=True)
     async def graph(self, ctx, *, string):
-        """Wolframalpha graphing"""
+        """Graphs a function
+        
+        This is basically a specific Wolfram Alpha query with different inputs (functions)
+        """
 
-        globals.messages += 1
         result = client.query("graph " + string)
         result = list(result)
         imageURL = result[1].get('subpod').get('img').get('@src')

@@ -12,9 +12,8 @@ class Steam(commands.Cog):
 
     @commands.command(pass_context=True)
     async def stat(self, ctx, *, string):
-        """Checking steam summary of a specific person from his ID"""
+        """Displays Steam account's summary of a specific person from his/her Steam ID"""
 
-        globals.messages += 1
         url = ('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=' + app_id + '&steamids=' + string)
         info_string = (requests.get(url).content)
         info_dict = json.loads(info_string)
