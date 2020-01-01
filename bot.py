@@ -7,6 +7,7 @@ from RNG import RNG
 from meme import Meme
 from wolfram import Wolfram
 from fun import Fun
+from steam import Steam
 import globals
 
 # Bot & Server tokens initialization
@@ -27,6 +28,7 @@ bot.add_cog(RNG(bot))
 bot.add_cog(Meme(bot))
 bot.add_cog(Wolfram(bot))
 bot.add_cog(Fun(bot))
+bot.add_cog(Steam(bot))
 
 # Helper function for logging
 async def update_stats():

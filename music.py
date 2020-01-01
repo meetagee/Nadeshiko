@@ -419,9 +419,9 @@ class Music(commands.Cog):
         ctx.voice_state.loop = not ctx.voice_state.loop
         
         if ctx.voice_state.loop:
-            return await ctx.send('Looping song ```css\n{}\n```'.format(str(ctx.voice_state.current.title)))
+            return await ctx.send('Looping song ```css\n{}\n```'.format(str(ctx.voice_state.current.source.title)))
         else:
-            return await ctx.send('Unlooping song ```css\n{}\n```'.format(str(ctx.voice_state.current.title)))
+            return await ctx.send('Unlooping song ```css\n{}\n```'.format(str(ctx.voice_state.current.source.title)))
 
 
     @commands.command(name='play')
