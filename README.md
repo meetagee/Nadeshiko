@@ -8,7 +8,7 @@ fyi: Nadeshiko is based on a female anime character [Nadeshiko Kagamihara](https
 
 In general, all commands can be shown in details through 1 simple command `n!help`. 
 
-We implemented various Entertainment-related categories of commands such as Meme, RNG, Steam along with our 2 most important categories Music and Wolfram. To use any of them, input a command in the form 'n!<One of the options below>'
+We implemented various Entertainment-related categories of commands such as Meme, RNG, Steam along with our 2 most important categories Music and Wolfram. To use any of them, input a command in the form `n!<One of the options below>`
 
 1. Fun:
     - ava:       Gets and displays the mentioned user's avatar
