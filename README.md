@@ -10,32 +10,30 @@ In general, all commands can be shown in details through 1 simple command `n!hel
 
 We implemented various Entertainment-related categories of commands such as Meme, RNG, Steam along with our 2 most important categories Music and Wolfram.
 
-'''
-Fun:
-  ava       Gets and displays the mentioned user's avatar
-  fake      Changes the bot's name and avatar to the same as the one mentioned
-Meme:
-  memedog   Replaces the dog's face with mentioned user's avatar
-  memestep  Steps on mentioned user's face
-Music:
-  join      Joins a voice channel
-  leave     Clears the queue and leaves the voice channel
-  loop      Loops the currently playing song
-  now       Displays the currently playing song
-  pause     Pauses the currently playing song
-  play      Plays a song
-  queue     Shows the player's queue
-  resume    Resumes a currently paused song
-  skip      Vote to skip a song. The requester can automatically skip.
-  stop      Stops playing song and clears the queue
-  volume    Sets the volume of the player from 0-100%
-RNG:
-  choose    Chooses one out of multiple inputs in form ______, ______, ______
-  quoteNgoc Chooses a random quote that Ngoc once said
-  random    Chooses a random number between 1 and the input number
-Steam:
-  stat      Displays Steam account's summary of a specific person from his/he...
-Wolfram:
-  graph     Graphs a function
-  wolf      Wolfram Alpha solver 
-'''
+1. Fun:
+    - ava       Gets and displays the mentioned user's avatar
+    - fake      Changes the bot's name and avatar to the same as the one mentioned
+2. Meme:
+    - memedog   Replaces the dog's face with mentioned user's avatar
+    - memestep  Steps on mentioned user's face
+3. Music:
+    - join      Joins a voice channel
+    - leave     Clears the queue and leaves the voice channel
+    - loop      Loops the currently playing song
+    - now       Displays the currently playing song
+    - pause     Pauses the currently playing song
+    - play      Plays a song
+    - queue     Shows the player's queue
+    - resume    Resumes a currently paused song
+    - skip      Vote to skip a song. The requester can automatically skip.
+    - stop      Stops playing song and clears the queue
+    - volume    Sets the volume of the player from 0-100%
+4. RNG:
+    - choose    Chooses one out of multiple inputs in form ______, ______, ______
+    - quoteNgoc Chooses a random quote that Ngoc once said
+    - random    Chooses a random number between 1 and the input number
+5. Steam:
+    - stat      Displays Steam account's summary of a specific person from his/he...
+6.Wolfram:
+    - graph     Graphs a function
+    - wolf      Wolfram Alpha solver 
