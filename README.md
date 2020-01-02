@@ -15,7 +15,7 @@ We implemented various Entertainment-related categories of commands such as Meme
     - fake:      Changes the bot's name and avatar to the same as the one mentioned
 2. Meme:
     - memedog:   Replaces the dog's face with mentioned user's avatar
-    - memestep:  Steps on mentioned user's face
+    - memestep:  Replaces the * with mentioned user's face
 3. Music:
     - join:      Joins a voice channel
     - leave:     Clears the queue and leaves the voice channel
@@ -33,7 +33,7 @@ We implemented various Entertainment-related categories of commands such as Meme
     - quoteNgoc: Chooses a random quote that Ngoc once said
     - random:    Chooses a random number between 1 and the input number
 5. Steam:
-    - stat:      Displays Steam account's summary of a specific person from their ID
+    - stat:      Displays Steam account's summary of a specific person from their steam ID
 6. Wolfram:
     - graph:     Graphs a function
     - wolf:      Wolfram Alpha solver 
