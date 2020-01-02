@@ -34,6 +34,6 @@ We implemented various Entertainment-related categories of commands such as Meme
     - random:    Chooses a random number between 1 and the input number
 5. Steam:
     - stat:      Displays Steam account's summary of a specific person from his ID
-6.Wolfram:
+6. Wolfram:
     - graph:     Graphs a function
     - wolf:      Wolfram Alpha solver 
